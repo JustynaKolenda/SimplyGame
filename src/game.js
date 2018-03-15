@@ -25,7 +25,6 @@ mountainImage.onload = function () {
 };
 mountainImage.src = "./images/mountain.png";
 
-
 var heroReady = false;
 var heroImage = new Image();
 heroImage.onload = function () {
@@ -40,12 +39,27 @@ monsterImage.onload = function () {
 };
 monsterImage.src = './images/monsterall.png';
 
-var mountain = class {
-  constructor(x, y) {
+
+class mountain {
+   constructor(x, y) {
     this.x = x;
     this.y = y;
-  }
+	this.width = 30;
+	this.height = 32;
+   }
+
+}
+
+let listObstacle = new Array();
+for (i=0;i<10;i++){
+  let x = Math.floor(Math.random() * 423) + 30;
+  let y = Math.floor(Math.random() * 385) + 30;
+  listObstacle.push(new mountain(x, y));
+   
 };
+console.log(listObstacle);
+
+
 
 var hero ={ 
 	x: 0,
@@ -203,8 +217,8 @@ var monstersCaught = 0;
 		monster.x = 32 + (Math.random() * (canvas.width - 74));
 		monster.y = 32 + (Math.random() * (canvas.height - 74));
 
-		mountain.x = 32 + (Math.random() * (canvas.width - 64));
-		mountain.y = 32 + (Math.random() * (canvas.height - 64));
+		
+		
 	};
 
 	
@@ -259,10 +273,11 @@ var monstersCaught = 0;
 		}
 		
 		if (mountainReady) {
-		var mountainClone = mountainImage.cloneNode(true);
-			
-		ctx.drawImage(mountainImage, mountain.x, mountain.y);
-		
+			listObstacle.forEach((obstacle)=>{
+				
+				ctx.drawImage(mountainImage, obstacle.x, obstacle.y);
+
+			})
 		}
 
 		// Score
