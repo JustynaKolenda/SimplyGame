@@ -51,9 +51,9 @@ class mountain {
 }
 
 let listObstacle = new Array();
-for (i=0;i<10;i++){
+for (i=0;i<20;i++){
   let x = Math.floor(Math.random() * 423) + 30;
-  let y = Math.floor(Math.random() * 385) + 30;
+  let y = Math.floor(Math.random() * 385) + 32;
   listObstacle.push(new mountain(x, y));
    
 };
@@ -87,6 +87,28 @@ var hero ={
 			}
 
 	},
+
+		
+	coliObstacle : (x,y)=>{
+
+			for(i=0; i< listObstacle.length; i++){
+
+					if (
+						x <= (listObstacle[i].x + 30)
+						&& listObstacle[i].x <= (x + 30)
+						&& y <= (listObstacle[i].y + 16)
+						&& listObstacle[i].y <= (y + 35)
+					) {
+						return false;
+					}
+
+			}
+
+				return true;
+
+	},
+	
+
 	go : (direction,modifier)=>{
 		let extraVector = 0;
 		hero.direction = direction;
@@ -95,26 +117,35 @@ var hero ={
 				extraVector = hero.y - hero.speed * modifier;
 				
 				if(extraVector>=0){
-					hero.y = extraVector;
+					if(hero.coliObstacle(hero.x, extraVector)){
+						hero.y = extraVector;
+					}
+					
 				}
 				break;
 			case "Bottom":
 				extraVector = hero.y + hero.speed * modifier;
 				if((extraVector+hero.height)<=Box.height){
-					hero.y = extraVector;
+					if(hero.coliObstacle(hero.x, extraVector)){
+						hero.y = extraVector;
+					}
 				}
 				break;
 			case "Left":
 				extraVector = hero.x - hero.speed * modifier;
 				if(extraVector>=0){
-					hero.x = extraVector;
+					if(hero.coliObstacle(extraVector, hero.y)){
+						hero.x = extraVector;
+					}
 				}
 				break;
 			case "Right":
 				extraVector = hero.x + hero.speed * modifier;
 				
 				if((extraVector+hero.width)<=Box.width){
-					hero.x = extraVector;
+					if(hero.coliObstacle(extraVector, hero.y)){
+						hero.x = extraVector;
+					}
 				}
 				break;
 			default:
@@ -151,6 +182,25 @@ var monster = {
 			}
 
 	},
+	coliObstacle : (x,y)=>{
+
+				for(i=0; i< listObstacle.length; i++){
+
+						if (
+							x <= (listObstacle[i].x + 30)
+							&& listObstacle[i].x <= (x + 30)
+							&& y <= (listObstacle[i].y + 16)
+							&& listObstacle[i].y <= (y + 35)
+						) {
+							return false;
+						}
+
+				}
+
+					return true;
+
+	},
+
 	go : function(modifier){
 		monster.directionCounter ++;
 
@@ -160,33 +210,42 @@ var monster = {
 				monster.direction = direction[nextVector];
 				monster.directionCounter = 0;
 			}
-		let monHeight = 0;
+		let extraVector = 0;
 		
-		switch(monster.direction) {
+		switch(monster.direction) {	
 			case "Top":
-				monHeight = monster.y - monster.speed * modifier;
-				if(monHeight>=0){
-					monster.y = monHeight;
+				extraVector = monster.y - monster.speed * modifier;
+				if(extraVector>=0){
+					if(monster.coliObstacle(monster.x, extraVector)){
+						monster.y = extraVector;
+					}
 				}
 				break;
 			case "Bottom":
-				monHeight =monster.y + monster.speed * modifier;
-				if((monHeight+monster.height)<=Box.height){
-					monster.y = monHeight;
+				extraVector =monster.y + monster.speed * modifier;
+				if((extraVector+monster.height)<=Box.height){
+					if(monster.coliObstacle(monster.x, extraVector)){
+					monster.y = extraVector;
+					}
 				}
 				break;
+
 			case "Left":
-				monHeight = monster.x - monster.speed * modifier;
-				if(monHeight>=0){
-					monster.x = monHeight;
+				extraVector = monster.x - monster.speed * modifier;
+				if(extraVector>=0){
+					if(monster.coliObstacle(extraVector, monster.y)){
+						monster.x = extraVector;
+					}
 				}
-				
 				break;
+
 			case "Right":
-				monHeight = monster.x + monster.speed * modifier;
+				extraVector = monster.x + monster.speed * modifier;
 				
-				if((monHeight+monster.width)<=Box.width){
-					monster.x = monHeight;
+				if((extraVector+monster.width)<=Box.width){
+					if(monster.coliObstacle(extraVector, monster.y)){
+						monster.x = extraVector;
+					}
 				}
 				break;
 			default:
@@ -239,8 +298,6 @@ var monstersCaught = 0;
 		  
 			monster.go(modifier);
 		
-		
-
 					// Are they touching?
 			if (
 				hero.x <= (monster.x + 32)
